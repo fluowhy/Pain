@@ -28,6 +28,7 @@ f_gamma = np.array([30, 100])
 
 F = np.array([f_delta, f_theta, f_alpha, f_beta, f_gamma])
 bandas = ['delta', 'theta', 'alpha', 'beta', 'gamma']
+t = np.linspace(0, 1, 2048)
 
 SD = [] # dolor
 SA = [] # analgesia
@@ -128,8 +129,8 @@ plt.show()
 
 # calculo de la potencia en cada banda
 print 'calculo la potencia de cada banda'
-pD = 10*np.log10(np.trapz(YD**2, axis=4)/2048)
-pA = 10*np.log10(np.trapz(YA**2, axis=5)/2048)
+pD = 10*np.log10(np.trapz(YD**2, t, axis=4))
+pA = 10*np.log10(np.trapz(YA**2, t, axis=5))
 
 # calculo del promedio de los 3 canales
 PD = np.mean(pD, axis=2)
