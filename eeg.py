@@ -9,14 +9,13 @@ from scipy.stats import kurtosis
 import scipy.signal as sc
 
 # Este programa calcula la potencia en distintas bandas para EEG de tres canales antes del estimulo
-# FALTA:	guardar files desde MATLAB BIEN!
-# 		guardar estimulo dado y percepcion del individuo, de esa manera, se puede calcular el promedio por estimulo dado y diferenciarlo del estimulo percibido. 
+# FALTA:	guardar estimulo dado y percepcion del individuo, de esa manera, se puede calcular el promedio por estimulo dado y diferenciarlo del estimulo percibido. 
 # 		la idea es obtener una tabla de la siguiente estructura:
 # |individuo|potencia banda x|...|nivel de analgesia|estimulo||percepcion|| 
 # la ultima columna es la clase a predecir
 # se pueden agregar caracteristicas de la señal como curtosis, varianza, cross frequency coupling
 
-data = np.loadtxt('/home/mauricio/Documents/Uni/Neuro/data/SA001/SA001_A1_7.txt')
+#data = np.loadtxt('/home/mauricio/Documents/Uni/Neuro/data/SA001/SA001_A1_7.txt')
 
 folders = [1, 3, 4, 6, 7, 8, 9]
 fs = 2048
@@ -45,11 +44,11 @@ for k in folders:
 		data = []
 		dataA = []
 		for i in [1, 2]:
-			data.append(np.loadtxt('/home/mauricio/Documents/Uni/Neuro/data/SA00'+str(k)+'/SA00'+str(k)+'_D'+str(i)+'_'+str(j)+'.txt'))
+			data.append(np.loadtxt('/home/mauricio/Documents/Uni/Neuro/Data/SA00'+str(k)+'/SA00'+str(k)+'_D'+str(i)+'_'+str(j)+'.txt'))
 		data = np.concatenate((data[0], data[1]))			
 		sd.append(data)		
 		for i in [1, 2, 3]:
-			data = np.loadtxt('/home/mauricio/Documents/Uni/Neuro/data/SA00'+str(k)+'/SA00'+str(k)+'_A'+str(i)+'_'+str(j)+'.txt')
+			data = np.loadtxt('/home/mauricio/Documents/Uni/Neuro/Data/SA00'+str(k)+'/SA00'+str(k)+'_A'+str(i)+'_'+str(j)+'.txt')
 			dataA.append(data)
 		dataA = np.array(dataA)
 		sa.append(dataA)
@@ -79,17 +78,9 @@ for f in F:
 
 """
 # visualizacion del corte del filtro
-
-w_d, h_d = sc.freqz(b_d, a_d, worN=1000)
-w_t, h_t = sc.freqz(b_t, a_t, worN=1000)
-w_a, h_a = sc.freqz(b_a, a_a, worN=1000)
-w_b, h_b = sc.freqz(b_b, a_b, worN=1000)
-w_g, h_g = sc.freqz(b_g, a_g, worN=1000)
-plt.plot((fs * 0.5 / np.pi) * w_d, 20*np.log10(abs(h_d)), label='delta')
-plt.plot((fs * 0.5 / np.pi) * w_t, 20*np.log10(abs(h_t)), label='theta')
-plt.plot((fs * 0.5 / np.pi) * w_a, 20*np.log10(abs(h_a)), label='alpha')
-plt.plot((fs * 0.5 / np.pi) * w_b, 20*np.log10(abs(h_b)), label='beta')
-plt.plot((fs * 0.5 / np.pi) * w_g, 20*np.log10(abs(h_g)), label='gamma')
+for i in range(len(F)):
+	w, h = sc.freqz(B[i], A[i], worN=1000)
+	plt.plot((fs * 0.5 / np.pi) * w, 20*np.log10(abs(h)), label=bandas[i])
 plt.xlim([0, 150])
 plt.ylim([-30, 5])
 plt.xlabel('frecuencia Hz')
@@ -105,7 +96,7 @@ for a, b in zip(A, B):
 	YA.append(sc.filtfilt(b, a, SA, axis=4))
 YD = np.array(YD) # shape: banda, individuo, canal, estimulo, muestra
 YA = np.array(YA) # shape: banda, individuo, canal, nivel de analgesia, estimulo, muestra
-
+"""
 # plots de señales filtradas
 plt.plot(SD[0,0,0,:], label='raw', linewidth=0.1)
 for i in range(5):
@@ -114,7 +105,7 @@ plt.xlabel('muestra')
 plt.ylabel('amplitud')
 plt.legend()
 plt.show()
-
+"""
 """
 # FFT
 
@@ -137,18 +128,26 @@ PD = np.mean(pD, axis=2)
 PA = np.mean(pA, axis=2)
 
 # construye base de datos
+# individuo, potencia en banda, nivel analgesia, estimulo, percepcion
 print 'construyendo base de datos'
 BD = []
 for j in range(7): # numero de individuos
-	for i in range(120):
-		
+	for i in range(80):
 		bd = np.array([j, PD[0,j,i], PD[1,j,i], PD[2,j,i], PD[3,j,i], PD[4,j,i], 0]) # falta estimulo y percepcion
 		BD.append(bd)
 	for k in range(3): # 3 niveles de analgesia
-		for i in range(60):
+		for i in range(20):
 			bd = np.array([j, PA[0,j,k,i], PA[1,j,k,i], PA[2,j,k,i], PA[3,j,k,i], PA[4,j,k,i], k+1])
 			BD.append(bd)
 BD = np.array(BD)
+
+# preprocesamiento
+
+# normalizacion
+
+# SVM
+
+# selección entrenamiento-prueba-validacion
 
 
 
