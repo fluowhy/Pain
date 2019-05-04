@@ -33,7 +33,7 @@ def rangos(A):
 	return A
 #data = np.loadtxt('/home/mauricio/Documents/Uni/Neuro/data/SA001/SA001_A1_7.txt')
 
-directory = '/home/mauricio/Documents/Pain/'
+directory = "../dataset/"
 
 folders = [1, 3, 4, 6, 7, 8, 9]
 fs = 2048
@@ -55,20 +55,19 @@ EPA = [] # estimulo-percepcion analgesia
 # SD: persona, canal, estimulo, muestra
 # SA: persona, canal, nivel analgesia, estimulo, muestra
 
-print 'recorro personas'
-for k in folders:
-	
+print('recorro personas')
+for k in folders:	
 	sd = []
 	sa = []
 	for j in [7, 8, 9]:
 		data = []
 		dataA = []
 		for i in [1, 2]:
-			data.append(np.loadtxt(directory+'Data/SA00'+str(k)+'/SA00'+str(k)+'_D'+str(i)+'_'+str(j)+'.txt'))
+			data.append(np.loadtxt(directory+'SA00'+str(k)+'/SA00'+str(k)+'_D'+str(i)+'_'+str(j)+'.txt'))
 		data = np.concatenate((data[0], data[1]))			
 		sd.append(data)		
 		for i in [1, 2, 3]:
-			data = np.loadtxt(directory+'Data/SA00'+str(k)+'/SA00'+str(k)+'_A'+str(i)+'_'+str(j)+'.txt')
+			data = np.loadtxt(directory+'SA00'+str(k)+'/SA00'+str(k)+'_A'+str(i)+'_'+str(j)+'.txt')
 			dataA.append(data)
 		dataA = np.array(dataA)
 		sa.append(dataA)
@@ -81,17 +80,17 @@ SA = np.array(SA)
 
 # se recorren nuevamente para guardar estimulo-percepcion
 # sujeto, estimulo, percepcion
-print 'nuevamente'
+print('nuevamente')
 for k in folders:
 	
 	epd = []
 	epa = []
 	for i in [1, 2]:
-		dt = np.loadtxt(directory+'Data/SA00'+str(k)+'/SA00'+str(k)+'_D'+str(i)+'.txt')
+		dt = np.loadtxt(directory+'SA00'+str(k)+'/SA00'+str(k)+'_D'+str(i)+'.txt')
 		epd.append(dt)
 	EPD.append(np.concatenate((epd[0], epd[1])))
 	for i in [1, 2, 3]:
-		dt = np.loadtxt(directory+'Data/SA00'+str(k)+'/SA00'+str(k)+'_A'+str(i)+'.txt')
+		dt = np.loadtxt(directory+'SA00'+str(k)+'/SA00'+str(k)+'_A'+str(i)+'.txt')
 		epa.append(dt)
 	EPA.append(np.concatenate((epa[0], epa[1], epa[2])))
 EPA = np.array(EPA)
@@ -124,7 +123,7 @@ EPA = rangos(EPA)
 
 # saca el promedio de la serie
 
-print 'resto el promedio'
+print('resto el promedio')
 SD = (SD.T-np.mean(SD, axis=3).T).T
 SA = (SA.T-np.mean(SA, axis=4).T).T
 
@@ -163,7 +162,7 @@ for i in range(len(folders)):
 S = np.array(S)
 
 # aplica filtro de fase lineal en bandas delta, theta, alpha, beta y gamma
-print 'estoy creando los filtros tipo butterworth fase lineal'
+print('estoy creando los filtros tipo butterworth fase lineal')
 B = []
 A = []
 for f in F:
@@ -210,13 +209,13 @@ plt.show()
 """
 
 # calculo de la potencia en cada banda en dB
-print 'calculo la potencia de cada banda en dB'
+print('calculo la potencia de cada banda en dB')
 P = 10*np.log10(np.trapz(Y**2, t, axis=4))/1. # T=1 segundo
 
 # construye base de datos
 # individuo, potencia en banda, nivel analgesia, percepcion
 # 0,         1, 2, 3, 4, 5,     6,               7
-print 'construyendo base de datos'
+print('construyendo base de datos')
 BD = []
 for j in range(7): # numero de individuos
 	BD.append(np.array([j, p[0]]))
